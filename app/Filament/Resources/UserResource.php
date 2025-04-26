@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserResource extends Resource
 {
@@ -26,19 +27,21 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
+                    ->disabled()
                     ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('nim')
+                    ->disabled()
                     ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    ->maxLength(255),
                 Forms\Components\Select::make('role')
                     ->options([
                         'mahasiswa' => 'Mahasiswa',
                         'bendahara' => 'Bendahara',
                         'panitia' => 'Panitia',
                     ])
+                    ->visible(fn($livewire) => auth()->user()->role === 'panitia')
+                    ->disabled(fn($livewire) => auth()->user()->role !== 'panitia')
                     ->required(),
                 Forms\Components\TextInput::make('password')
                     ->password()
@@ -79,11 +82,19 @@ class UserResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(
+                        fn($record) =>
+                        auth()->user()->role === 'panitia' ||
+                            auth()->id() === $record->id
+                    ),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn() => auth()->user()->role === 'panitia'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn() => auth()->user()->role === 'panitia'),
                 ]),
             ]);
     }

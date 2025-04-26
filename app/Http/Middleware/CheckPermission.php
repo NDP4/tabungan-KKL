@@ -31,6 +31,10 @@ class CheckPermission
             'expenses.approve',
             'reports.view',
             'profile.edit',
+            'users.manage',
+            'users.edit-role',
+            'users.create',
+            'users.delete'
         ]
     ];
 
