@@ -141,6 +141,7 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
+                                    <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Setoran Ke</th>
                                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Tanggal</th>
                                     {{-- <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Minggu Ke</th> --}}
                                     <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Jumlah</th>
@@ -152,6 +153,9 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($savings as $saving)
                                 <tr>
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                                        #{{ $saving->sequence_number }}
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ $saving->created_at->format('d/m/Y H:i') }}
                                     </td>
@@ -263,22 +267,57 @@
 
     @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const paymentMethod = document.getElementById('payment_method');
+        // Add event listener for payment method change
+        document.getElementById('payment_method').addEventListener('change', function() {
             const proofFileInput = document.getElementById('proofFileInput');
-
-            function toggleProofFile() {
-                proofFileInput.classList.toggle('hidden', paymentMethod.value !== 'transfer');
-            }
-
-            paymentMethod.addEventListener('change', toggleProofFile);
-            toggleProofFile();
-
-            // Show proof file input if transfer was previously selected and there was an error
-            if ('{{ old('payment_method') }}' === 'transfer') {
-                proofFileInput.classList.remove('hidden');
-            }
+            proofFileInput.style.display = this.value === 'transfer' ? 'block' : 'none';
         });
+
+        // Show status notifications with Toastr
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+
+        @if(session('warning'))
+            toastr.warning("{{ session('warning') }}");
+        @endif
+
+        @if(session('info'))
+            toastr.info("{{ session('info') }}");
+        @endif
+
+        // Handle form submission feedback
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
+
+        // Confirmation handlers
+        window.addEventListener('saving-deleted', event => {
+            toastr.success('Setoran berhasil dihapus');
+        });
+
+        window.addEventListener('saving-cancelled', event => {
+            toastr.success('Setoran berhasil dibatalkan');
+        });
+
+        // Handle modal confirmations
+        function confirmCancel(savingId) {
+            if(confirm('Yakin ingin membatalkan setoran ini?')) {
+                document.getElementById('cancel-form-'+savingId).submit();
+            }
+        }
+
+        function confirmDelete(savingId) {
+            if(confirm('Yakin ingin menghapus setoran ini dari riwayat?')) {
+                document.getElementById('delete-form-'+savingId).submit();
+            }
+        }
     </script>
     @endpush
 </x-app-layout>

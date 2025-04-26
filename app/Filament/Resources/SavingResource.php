@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
 
 class SavingResource extends Resource
 {
@@ -55,7 +56,14 @@ class SavingResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('sequence_number')
+                    ->label('Setoran Ke')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('user.name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('user.nim')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount')

@@ -12,45 +12,21 @@
                         <!-- Amount Details -->
                         <div class="p-6 mb-6 rounded-lg bg-gray-50">
                             <div class="text-sm text-gray-600">Total Setoran</div>
-                            <div class="mt-1 text-3xl font-bold text-indigo-600">
-                                Rp {{ number_format($saving->amount, 0, ',', '.') }}
+                            <div class="flex items-center gap-2 mt-1">
+                                <div class="text-3xl font-bold text-indigo-600" id="formattedAmount">
+                                    Rp {{ number_format($saving->amount, 0, ',', '.') }}
+                                </div>
+                                <button onclick="copyAmount()"
+                                    class="inline-flex items-center p-1.5 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    title="Salin jumlah">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
                         <!-- Bank Details -->
-                        {{-- <div class="p-6 mb-6 border rounded-lg">
-                            <h3 class="mb-4 text-lg font-medium text-gray-900">Informasi Rekening</h3>
-
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Bank</label>
-                                    <div class="flex items-center mt-1">
-                                        <span class="text-gray-900">BRI</span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Nomor Rekening</label>
-                                    <div class="flex items-center mt-1 space-x-2">
-                                        <span class="text-gray-900" id="accountNumber">1234567890</span>
-                                        <button onclick="copyToClipboard('accountNumber')"
-                                            class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
-                                            </svg>
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Atas Nama</label>
-                                    <div class="mt-1">
-                                        <span class="text-gray-900">BENDAHARA KKL</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
                         <x-bank-account-info />
 
                         <!-- Action Buttons -->
@@ -76,11 +52,17 @@
 
     @push('scripts')
     <script>
+        function copyAmount() {
+            const amount = parseInt('{{ $saving->amount }}');
+            navigator.clipboard.writeText(amount).then(() => {
+                toastr.success('Jumlah berhasil disalin ke clipboard');
+            });
+        }
+
         function copyToClipboard(elementId) {
             const text = document.getElementById(elementId).textContent;
             navigator.clipboard.writeText(text).then(() => {
-                // Could add a toast notification here
-                alert('Nomor rekening berhasil disalin!');
+                toastr.success('Nomor rekening berhasil disalin ke clipboard');
             });
         }
     </script>

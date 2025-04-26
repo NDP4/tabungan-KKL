@@ -15,6 +15,7 @@ class Saving extends Model
 
     protected $fillable = [
         'user_id',
+        'sequence_number',
         'amount',
         'week_number',
         'payment_method',
@@ -44,6 +45,16 @@ class Saving extends Model
             if (is_null($saving->week_number)) {
                 $saving->week_number = app(SavingsService::class)->calculateWeekNumber();
             }
+
+            if (!$saving->sequence_number) {
+                // Get last successful sequence number for this user
+                $lastSaving = static::where('user_id', $saving->user_id)
+                    ->whereIn('status', ['approved', 'pending'])
+                    ->orderBy('sequence_number', 'desc')
+                    ->first();
+
+                $saving->sequence_number = $lastSaving ? $lastSaving->sequence_number + 1 : 1;
+            }
         });
     }
 
@@ -71,9 +82,10 @@ class Saving extends Model
     public function getWhatsappMessage(): string
     {
         return sprintf(
-            "Halo Bendahara, saya %s dengan NIM %s telah menabung sebesar Rp %s dengan metode %s. Catatan: %s",
+            "Halo Bendahara, saya *%s* dengan NIM *%s* telah menabung ke *%d* sebesar *Rp %s* dengan metode *%s*. Catatan: *%s*",
             $this->user->name,
             $this->user->nim,
+            $this->sequence_number,
             number_format($this->amount, 0, ',', '.'),
             $this->payment_method,
             $this->notes ?? '-'

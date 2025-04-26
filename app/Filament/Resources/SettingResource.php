@@ -25,17 +25,46 @@ class SettingResource extends Resource
         return static::getModel()::count();
     }
 
+    protected static function getPredefinedSettings(): array
+    {
+        return [
+            'payment' => [
+                'account_number' => 'Nomor Rekening',
+                'account_holder' => 'Nama Pemilik Rekening',
+                'bank_name' => 'Nama Bank',
+            ],
+            'website' => [
+                'site_name' => 'Nama Aplikasi',
+                'site_logo' => 'Logo Aplikasi',
+                'target_amount' => 'Target Tabungan',
+                'weekly_target' => 'Target Mingguan',
+                'treasurer_name' => 'Nama Bendahara',
+                'treasurer_signature' => 'Tanda Tangan Bendahara',
+            ],
+            'contact' => [
+                'admin_phone' => 'No HP Admin',
+                'admin_email' => 'Email Admin',
+            ],
+        ];
+    }
+
     public static function form(Form $form): Form
     {
         $predefinedSettings = [
+            'website' => [
+                'site_name' => 'Nama Website',
+                // 'site_description' => 'Deskripsi Website',
+                'site_logo' => 'Logo Website',
+                'favicon' => 'Favicon',
+            ],
             'payment' => [
                 'bank_name' => 'Nama Bank',
                 'account_number' => 'Nomor Rekening',
                 'account_holder' => 'Nama Pemilik Rekening',
             ],
-            'website' => [
-                'site_name' => 'Nama Website',
-                'site_description' => 'Deskripsi Website',
+            'treasurer' => [
+                // 'treasurer_name' => 'Nama Bendahara',
+                'treasurer_signature' => 'Tanda Tangan Bendahara',
             ],
             'contact' => [
                 'admin_phone' => 'Nomor WhatsApp Admin',
@@ -46,12 +75,14 @@ class SettingResource extends Resource
         return $form->schema([
             Select::make('group')
                 ->options([
-                    'payment' => 'Pembayaran',
                     'website' => 'Website',
+                    'payment' => 'Pembayaran',
+                    'treasurer' => 'Bendahara',
                     'contact' => 'Kontak',
                 ])
                 ->required()
-                ->reactive(),
+                ->reactive()
+                ->afterStateUpdated(fn(callable $set) => $set('key', null)),
 
             Select::make('key')
                 ->options(function (callable $get) use ($predefinedSettings) {
@@ -60,16 +91,25 @@ class SettingResource extends Resource
                 })
                 ->required()
                 ->reactive()
-                ->helperText('Pilih jenis pengaturan yang ingin diubah'),
+                ->helperText('Pilih pengaturan yang ingin diubah'),
+
+            FileUpload::make('value')
+                ->image()
+                ->directory('settings')
+                ->preserveFilenames()
+                ->maxSize(1024)
+                ->visible(fn($get) => in_array($get('key'), ['site_logo', 'favicon', 'treasurer_signature']))
+                ->helperText('Upload gambar dengan format PNG, JPG, atau SVG. Maksimal 1MB.'),
 
             TextInput::make('value')
                 ->required()
-                ->label(function (callable $get) use ($predefinedSettings) {
+                ->visible(fn($get) => !in_array($get('key'), ['site_logo', 'favicon', 'treasurer_signature']))
+                ->label(function ($get) use ($predefinedSettings) {
                     $group = $get('group');
                     $key = $get('key');
                     return $predefinedSettings[$group][$key] ?? 'Nilai';
                 })
-                ->helperText(function (callable $get) {
+                ->helperText(function ($get) {
                     $key = $get('key');
                     if ($key === 'account_number') {
                         return 'Masukkan nomor rekening tanpa spasi';
@@ -91,6 +131,7 @@ class SettingResource extends Resource
                         'warning' => 'payment',
                         'success' => 'website',
                         'info' => 'contact',
+                        'primary' => 'treasurer',
                     ]),
                 TextColumn::make('key')
                     ->searchable()
@@ -108,6 +149,7 @@ class SettingResource extends Resource
                         'payment' => 'Pembayaran',
                         'website' => 'Website',
                         'contact' => 'Kontak',
+                        'treasurer' => 'Bendahara',
                     ]),
             ])
             ->actions([
