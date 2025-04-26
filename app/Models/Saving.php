@@ -82,7 +82,8 @@ class Saving extends Model
 
     public function getWhatsappUrl(): string
     {
-        return "https://wa.me/6285866233841?text=" . urlencode($this->getWhatsappMessage());
+        $adminPhone = settings('admin_phone', '6285866233841');
+        return "https://wa.me/{$adminPhone}?text=" . urlencode($this->getWhatsappMessage());
     }
 
     public function confirm(?User $user): bool

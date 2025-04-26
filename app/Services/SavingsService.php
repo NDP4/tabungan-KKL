@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Saving;
-use Carbon\Carbon;
+use Carbon\{Carbon, CarbonInterface};
 
 class SavingsService
 {
@@ -13,7 +13,7 @@ class SavingsService
     private const PROGRAM_START = '2025-05-01'; // May 1, 2025 as program start date
     private const WEEK_TWO_START = '2025-05-06';  // Monday 00:00 after May 1
 
-    protected function getStartDate(): \Carbon\Carbon
+    protected function getStartDate(): Carbon
     {
         return Carbon::create(2025, 5, 1, 0, 0, 0); // May 1, 2025 00:00:00
     }
@@ -231,35 +231,46 @@ class SavingsService
         return $weeklyData->toArray();
     }
 
-    public function getWeekRange(): array
+    public function getWeekRange(int $weekNumber = null): array
     {
-        $startDate = Carbon::parse('2025-05-01'); // 1 Mei 2025
+        $startDate = Carbon::parse(self::PROGRAM_START);
         $now = Carbon::now();
 
-        if ($now->lt($startDate)) {
+        // If no week number provided, calculate current week
+        if ($weekNumber === null) {
+            if ($now->lt($startDate)) {
+                return [
+                    'start' => $now->format('Y-m-d'),
+                    'end' => $now->format('Y-m-d'),
+                    'week_number' => -1
+                ];
+            }
+            $weekNumber = $this->calculateWeekNumber();
+        }
+
+        // Handle pre-program period
+        if ($weekNumber === -1) {
             return [
-                'start' => $now->format('Y-m-d'),
-                'end' => $now->format('Y-m-d'),
-                'week_number' => -1
+                'start' => null,
+                'end' => Carbon::parse(self::PROGRAM_START)->subDay(),
             ];
         }
 
-        $weekNumber = $this->calculateWeekNumber();
-
+        // Handle first week (special case)
         if ($weekNumber === 1) {
-            // Untuk minggu pertama, gunakan range dari tanggal mulai sampai Senin berikutnya
-            $weekStart = $startDate;
-            $weekEnd = $startDate->copy()->next(Carbon::MONDAY)->subDay();
-        } else {
-            // Untuk minggu-minggu berikutnya, gunakan range Senin-Minggu
-            $firstMonday = $startDate->copy()->next(Carbon::MONDAY);
-            $weekStart = $firstMonday->copy()->addWeeks($weekNumber - 2)->startOfWeek();
-            $weekEnd = $weekStart->copy()->endOfWeek();
+            return [
+                'start' => Carbon::parse(self::PROGRAM_START),
+                'end' => Carbon::parse(self::WEEK_TWO_START)->subDay(),
+            ];
         }
 
+        // Handle week 2 onwards
+        $weekTwoStart = Carbon::parse(self::WEEK_TWO_START);
+        $start = $weekTwoStart->copy()->addWeeks($weekNumber - 2);
+
         return [
-            'start' => $weekStart->format('Y-m-d'),
-            'end' => $weekEnd->format('Y-m-d'),
+            'start' => $start,
+            'end' => $start->copy()->addDays(6),
             'week_number' => $weekNumber
         ];
     }
@@ -298,29 +309,5 @@ class SavingsService
         });
 
         return $weeklyData->toArray();
-    }
-
-    public function getWeekRange(int $weekNumber): array
-    {
-        if ($weekNumber === -1) {
-            return [
-                'start' => null,
-                'end' => Carbon::parse(self::PROGRAM_START)->subDay(),
-            ];
-        }
-
-        if ($weekNumber === 1) {
-            return [
-                'start' => Carbon::parse(self::PROGRAM_START),
-                'end' => Carbon::parse(self::WEEK_TWO_START)->subDay(),
-            ];
-        }
-
-        $weekTwoStart = Carbon::parse(self::WEEK_TWO_START);
-        $start = $weekTwoStart->copy()->addWeeks($weekNumber - 2);
-        return [
-            'start' => $start,
-            'end' => $start->copy()->addDays(6),
-        ];
     }
 }

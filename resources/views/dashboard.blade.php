@@ -191,11 +191,11 @@
 
                                             <x-modal name="confirm-cancel-{{$saving->id}}" focusable>
                                                 <div class="p-6">
-                                                    <h2 class="text-lg font-medium text-gray-900">
+                                                    <h2 class="text-lg font-medium text-white">
                                                         Konfirmasi Pembatalan
                                                     </h2>
 
-                                                    <p class="mt-1 text-sm text-gray-600">
+                                                    <p class="mt-1 text-sm text-gray-400">
                                                         Yakin ingin membatalkan setoran ini?
                                                     </p>
 
@@ -223,11 +223,11 @@
 
                                             <x-modal name="confirm-delete-{{$saving->id}}" focusable>
                                                 <div class="p-6">
-                                                    <h2 class="text-lg font-medium text-gray-900">
+                                                    <h2 class="text-lg font-medium text-white">
                                                         Konfirmasi Penghapusan
                                                     </h2>
 
-                                                    <p class="mt-1 text-sm text-gray-600">
+                                                    <p class="mt-1 text-sm text-gray-400">
                                                         Yakin ingin menghapus setoran ini dari riwayat?
                                                     </p>
 

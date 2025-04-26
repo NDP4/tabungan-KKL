@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabungan KKL - Aplikasi Menabung untuk Masa Depanmu</title>
+    <title>{{ settings('site_name', 'Tabungan KKL') }} - Aplikasi Menabung untuk Masa Depanmu</title>
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -14,7 +14,7 @@
             <div class="container flex items-center justify-between mx-auto">
                 <!-- Logo -->
                 <div class="text-2xl font-bold text-indigo-600">
-                    Tabungan KKL
+                    {{ settings('site_name', 'Tabungan KKL') }}
                 </div>
 
                 <!-- Navigation Links -->
