@@ -26,7 +26,7 @@ class SavingRejected extends Notification
         return (new MailMessage)
             ->subject('Setoran KKL Ditolak')
             ->greeting('Hai ' . $notifiable->name . ',')
-            ->line('Setoran KKL anda sebesar Rp ' . number_format($this->saving->amount, 0, ',', '.') . ' ditolak.')
+            ->line('Setoran KKL anda sebesar Rp ' . number_format($this->saving->amount, 0, ',', '.') . ' ditolak oleh ' . $this->saving->confirmedByUser->name . '.')
             ->line('Alasan: ' . $this->reason)
             ->line('Silakan coba lagi dengan memperbaiki masalah tersebut.');
     }
@@ -37,7 +37,8 @@ class SavingRejected extends Notification
             'saving_id' => $this->saving->id,
             'amount' => $this->saving->amount,
             'reason' => $this->reason,
-            'message' => 'Setoran KKL anda ditolak'
+            'confirmed_by' => $this->saving->confirmedByUser->name,
+            'message' => 'Setoran KKL anda ditolak oleh ' . $this->saving->confirmedByUser->name
         ];
     }
 }

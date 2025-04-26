@@ -18,49 +18,54 @@
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
-    <!-- Scripts -->
+    @livewireStyles
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
-<body class="h-full font-sans antialiased">
+<body class="h-full font-sans antialiased" x-data="{ mobileMenuOpen: false }">
     <div class="min-h-full">
         <nav class="bg-white shadow">
             <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
+                    <!-- Logo and Site Name -->
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <a href="{{ url('/') }}">
+                            <a href="{{ url('/') }}" class="flex items-center">
                                 @if(settings('site_logo'))
                                     <img class="w-auto h-8" src="{{ Storage::url(settings('site_logo')) }}" alt="{{ settings('site_name', 'Your Company') }}">
                                 @else
                                     <img class="w-8 h-8" src="https://tailwindui.com/img/logos/mark.svg?color=white" alt="{{ settings('site_name', 'Your Company') }}">
                                 @endif
+                                <span class="ml-2 text-lg font-semibold text-gray-900">{{ settings('site_name', config('app.name')) }}</span>
                             </a>
                         </div>
-                        <div class="hidden md:block">
-                            <div class="flex items-baseline ml-10 space-x-4">
-                                <a href="{{route('dashboard')}}">
-                                    <span class="mr-4 font-semibold text-black">{{ settings('site_name', config('app.name')) }}</span>
+
+                        <!-- Desktop Navigation -->
+                        <div class="hidden md:ml-6 md:flex md:space-x-4">
+                            <a href="{{ route('dashboard') }}"
+                               class="{{ request()->routeIs('dashboard') ? 'bg-indigo-700 text-white' : 'text-gray-900 hover:bg-indigo-500 hover:text-white' }} px-3 py-2 text-sm font-medium rounded-md">
+                                Dashboard
+                            </a>
+                            @if(auth()->user()->role === 'bendahara' || auth()->user()->role === 'panitia')
+                                <a href="{{ route('filament.admin.pages.dashboard') }}"
+                                   class="px-3 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-indigo-500 hover:text-white">
+                                    Admin Panel
                                 </a>
-                                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'bg-indigo-700 text-white' : 'text-white hover:bg-indigo-500' }} rounded-md px-3 py-2 text-sm font-medium">Dashboard</a>
-                                @if(auth()->user()->role === 'bendahara' || auth()->user()->role === 'panitia')
-                                    <a href="{{ route('filament.admin.pages.dashboard') }}" class="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-indigo-500">Admin Panel</a>
-                                @endif
-                            </div>
+                            @endif
                         </div>
                     </div>
                     <div class="hidden md:block">
                         <div class="flex items-center ml-4 md:ml-6">
+                            <!-- Notification Component -->
+                            @livewire('notification-component')
+
                             <div class="relative ml-3" x-data="{ open: false }">
                                 <div>
-                                    <button @click="open = !open" type="button" class="flex items-center max-w-xs text-sm text-white bg-indigo-600 rounded-full focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600" id="user-menu-button">
+                                    <button @click="open = !open" type="button" class="flex items-center max-w-xs text-sm bg-indigo-700 rounded-full focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600" id="user-menu-button">
                                         <span class="sr-only">Open user menu</span>
-                                        <span class="flex items-center justify-center w-8 h-8 bg-indigo-700 rounded-full">
+                                        <span class="flex items-center justify-center w-8 h-8 text-white rounded-full">
                                             {{ substr(auth()->user()->name, 0, 1) }}
                                         </span>
                                     </button>
@@ -76,6 +81,57 @@
                                     </form>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="flex -mr-2 md:hidden">
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:bg-gray-100 hover:text-gray-500">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div class="md:hidden" x-show="mobileMenuOpen" x-cloak>
+                    <div class="px-2 pt-2 pb-3 space-y-1">
+                        <a href="{{ route('dashboard') }}"
+                           class="{{ request()->routeIs('dashboard') ? 'bg-indigo-700 text-white' : 'text-gray-900 hover:bg-indigo-500 hover:text-white' }} block px-3 py-2 text-base font-medium rounded-md">
+                            Dashboard
+                        </a>
+                        @if(auth()->user()->role === 'bendahara' || auth()->user()->role === 'panitia')
+                            <a href="{{ route('filament.admin.pages.dashboard') }}"
+                               class="block px-3 py-2 text-base font-medium text-gray-900 rounded-md hover:bg-indigo-500 hover:text-white">
+                                Admin Panel
+                            </a>
+                        @endif
+                    </div>
+                    <div class="pt-4 pb-3 border-t border-gray-200">
+                        <div class="flex items-center px-5">
+                            <div class="flex-shrink-0">
+                                <span class="flex items-center justify-center w-10 h-10 text-white bg-indigo-700 rounded-full">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </span>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-base font-medium text-gray-800">{{ auth()->user()->name }}</div>
+                                <div class="text-sm font-medium text-gray-500">{{ auth()->user()->email }}</div>
+                            </div>
+                            <div class="ml-auto">
+                                @livewire('notification-component')
+                            </div>
+                        </div>
+                        <div class="px-2 mt-3 space-y-1">
+                            <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-base font-medium text-gray-900 rounded-md hover:bg-gray-100">Profile</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="block w-full px-3 py-2 text-base font-medium text-left text-gray-900 rounded-md hover:bg-gray-100">
+                                    Sign out
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -101,6 +157,7 @@
         </main>
     </div>
 
+    @livewireScripts
     @stack('scripts')
 
     <!-- jQuery (required for Toastr) -->
@@ -123,6 +180,17 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         };
+
+        // Handle notification updates
+        window.addEventListener('notificationMarkedAsRead', event => {
+            toastr.success('Notification marked as read');
+            Livewire.emit('refreshNotifications');
+        });
+
+        window.addEventListener('allNotificationsMarkedAsRead', event => {
+            toastr.success('All notifications marked as read');
+            Livewire.emit('refreshNotifications');
+        });
 
         // Replace default alerts with Toastr
         window.addEventListener('alert', event => {

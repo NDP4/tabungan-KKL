@@ -25,7 +25,7 @@ class SavingApproved extends Notification
         return (new MailMessage)
             ->subject('Setoran KKL Disetujui')
             ->greeting('Hai ' . $notifiable->name . ',')
-            ->line('Setoran KKL anda sebesar Rp ' . number_format($this->saving->amount, 0, ',', '.') . ' telah disetujui.')
+            ->line('Setoran KKL anda sebesar Rp ' . number_format($this->saving->amount, 0, ',', '.') . ' telah disetujui oleh ' . $this->saving->confirmedByUser->name . '.')
             ->line('Terima kasih atas kontribusi anda!');
     }
 
@@ -34,7 +34,8 @@ class SavingApproved extends Notification
         return [
             'saving_id' => $this->saving->id,
             'amount' => $this->saving->amount,
-            'message' => 'Setoran KKL anda telah disetujui'
+            'confirmed_by' => $this->saving->confirmedByUser->name,
+            'message' => 'Setoran KKL anda telah disetujui oleh ' . $this->saving->confirmedByUser->name
         ];
     }
 }

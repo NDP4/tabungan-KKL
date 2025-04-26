@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
+use App\Notifications\SavingApproved;
 
 class Saving extends Model
 {
@@ -54,6 +55,15 @@ class Saving extends Model
                     ->first();
 
                 $saving->sequence_number = $lastSaving ? $lastSaving->sequence_number + 1 : 1;
+            }
+        });
+    }
+
+    protected static function booted()
+    {
+        static::updated(function ($saving) {
+            if ($saving->isDirty('status') && $saving->status === 'approved') {
+                $saving->user->notify(new SavingApproved($saving));
             }
         });
     }

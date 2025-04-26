@@ -38,7 +38,11 @@ class PendingConfirmations extends BaseWidget
                 Tables\Actions\Action::make('approve')
                     ->label('Terima')
                     ->color('success')
-                    ->action(fn(Saving $record) => $record->update(['status' => 'approved']))
+                    ->action(fn(Saving $record) => $record->update([
+                        'status' => 'approved',
+                        'confirmed_by' => auth()->id(),
+                        'confirmed_at' => now()
+                    ]))
                     ->requiresConfirmation(),
                 Tables\Actions\Action::make('reject')
                     ->label('Tolak')
