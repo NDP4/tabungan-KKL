@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:send-weekly-reminders')
             ->weeklyOn(1, '09:00')
             ->timezone('Asia/Jakarta');
+        $schedule->command('app:send-weekly-reminders')->weekly()->mondays()->at('09:00');
     }
 
     protected function commands(): void

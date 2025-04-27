@@ -1,21 +1,24 @@
-@component('mail::message')
-# Pengingat Setoran KKL Mingguan
+@extends('emails.layouts.base')
 
-Hai {{ $user->name }},
+@section('title', 'Pengingat Setoran KKL Minggu Ini')
 
-Minggu ini kamu belum mencapai target setoran mingguan KKL sebesar **Rp {{ number_format($targetAmount, 0, ',', '.') }}**.
+@section('content')
+    <p>Hai {{ $notifiable->name }},</p>
 
-Status setoran mingguan kamu:
-- Target: **Rp {{ number_format($targetAmount, 0, ',', '.') }}**
-- Sudah disetor: **Rp {{ number_format($currentAmount, 0, ',', '.') }}**
-- Sisa yang perlu disetor: **Rp {{ number_format($targetAmount - $currentAmount, 0, ',', '.') }}**
+    <p>Minggu ini Anda belum mencapai target setoran mingguan KKL.</p>
 
-@component('mail::button', ['url' => route('dashboard')])
-Setor Sekarang
-@endcomponent
+    <div class="info-box">
+        <p class="amount">Target: Rp {{ number_format($targetAmount, 0, ',', '.') }}</p>
+        <p class="amount">Sudah disetor: Rp {{ number_format($currentAmount, 0, ',', '.') }}</p>
 
-Yuk segera setor untuk mencapai target KKL kita!
+        <div class="progress-container">
+            <div class="progress-bar" style="width: {{ min(($currentAmount / $targetAmount) * 100, 100) }}%"></div>
+        </div>
+    </div>
 
-Salam,<br>
-Tim Bendahara KKL
-@endcomponent
+    <p>Yuk, segera lakukan setoran agar target KKL Anda tercapai tepat waktu!</p>
+
+    <div style="text-align: center;">
+        <a href="{{ route('savings.create') }}" class="button">Setor Sekarang</a>
+    </div>
+@endsection

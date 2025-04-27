@@ -3,26 +3,31 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
-use App\Services\NotificationService;
+use App\Notifications\WeeklyReminder;
 use Illuminate\Console\Command;
 
 class SendWeeklyReminders extends Command
 {
     protected $signature = 'app:send-weekly-reminders';
-    protected $description = 'Send weekly savings reminders to students';
+    protected $description = 'Send weekly savings reminder to users who haven\'t met their target';
 
-    public function handle(NotificationService $notificationService): int
+    public function handle(): void
     {
-        $students = User::where('role', 'mahasiswa')
-            ->whereDoesntHave('savings', function ($query) {
-                $query->where('created_at', '>=', now()->startOfWeek());
-            })
-            ->get()
-            ->all();
+        $weeklyTarget = config('kkl.weekly_target', 50000);
 
-        $notificationService->sendWeeklyReminders($students);
+        User::where('role', 'mahasiswa')->chunk(100, function ($users) use ($weeklyTarget) {
+            foreach ($users as $user) {
+                $weeklySavings = $user->weekly_savings;
 
-        $this->info("Sent weekly reminders to " . count($students) . " students.");
-        return Command::SUCCESS;
+                if ($weeklySavings < $weeklyTarget) {
+                    $user->notify(new WeeklyReminder(
+                        targetAmount: $weeklyTarget,
+                        currentAmount: $weeklySavings
+                    ));
+                }
+            }
+        });
+
+        $this->info('Weekly reminders sent successfully.');
     }
 }

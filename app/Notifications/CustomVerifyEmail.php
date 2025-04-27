@@ -20,12 +20,12 @@ class CustomVerifyEmail extends Notification
         $verificationUrl = $this->verificationUrl($notifiable);
 
         return (new MailMessage)
-            ->subject('Verifikasi Email KKL - ' . config('app.name'))
-            ->greeting('Halo ' . $notifiable->name . '!')
-            ->line('Terima kasih telah mendaftar di aplikasi KKL kami.')
-            ->line('Silakan klik tombol di bawah untuk memverifikasi alamat email Anda.')
-            ->action('Verifikasi Email', $verificationUrl)
-            ->line('Jika Anda tidak membuat akun, abaikan email ini.');
+            ->subject('Verifikasi Email - ' . config('app.name'))
+            ->view('emails.verify-email', [
+                'verificationUrl' => $verificationUrl,
+                'name' => $notifiable->name,
+                'count' => Config::get('auth.verification.expire', 60)
+            ]);
     }
 
     protected function verificationUrl($notifiable): string

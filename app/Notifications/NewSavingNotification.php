@@ -5,9 +5,9 @@ namespace App\Notifications;
 use App\Models\Saving;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\DatabaseMessage;
 
-class SavingSubmitted extends Notification
+class NewSavingNotification extends Notification
 {
     use Queueable;
 
@@ -25,11 +25,8 @@ class SavingSubmitted extends Notification
         return [
             'icon' => 'heroicon-o-banknotes',
             'title' => 'Setoran Baru',
+            'message' => "{$this->saving->user->name} telah menabung sebesar Rp " . number_format($this->saving->amount, 0, ',', '.'),
             'saving_id' => $this->saving->id,
-            'amount' => $this->saving->amount,
-            'student_name' => $this->saving->user->name,
-            'payment_method' => $this->saving->payment_method,
-            'message' => "Setoran baru dari {$this->saving->user->name} sebesar Rp" . number_format($this->saving->amount, 0, ',', '.'),
             'url' => route('filament.admin.resources.savings.edit', $this->saving)
         ];
     }

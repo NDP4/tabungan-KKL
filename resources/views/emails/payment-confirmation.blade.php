@@ -1,17 +1,27 @@
-@component('mail::message')
-# Konfirmasi Pembayaran KKL
+@extends('emails.layouts.base')
 
-Hai {{ $saving->creator->name }},
+@section('title', 'Menabung KKL Disetujui')
 
-Terima kasih atas setoran KKL anda sebesar **Rp {{ number_format($saving->amount, 0, ',', '.') }}**.
+@section('content')
+    <p>Hai {{ $saving->user->name }},</p>
 
-Total setoran anda saat ini: **Rp {{ number_format($totalSavings, 0, ',', '.') }}**
-Progress: **{{ number_format($progress, 1) }}%**
+    <div class="info-box">
+        <p class="amount">kamu telah menabung Rp {{ number_format($saving->amount, 0, ',', '.') }}</p>
+        <p>Menabung KKL Anda telah disetujui oleh {{ $saving->confirmedByUser->name }}</p>
 
-@component('mail::button', ['url' => url('/dashboard')])
-Lihat Detail
-@endcomponent
+        <div class="mt-4">
+            <p class="mb-2 text-sm text-gray-600">Progress Tabungan KKL:</p>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: {{ min($progress, 100) }}%"></div>
+            </div>
+            <p class="mt-2">Total Tabungan: Rp {{ number_format($totalSavings, 0, ',', '.') }}</p>
+            <p>Progress: {{ number_format($progress, 1) }}%</p>
+        </div>
+    </div>
 
-Terima kasih,<br>
-{{ config('app.name') }}
-@endcomponent
+    <p>Terima kasih atas kontribusi Anda dalam mencapai target KKL!</p>
+
+    <div style="text-align: center;">
+        <a href="{{ route('dashboard') }}" class="button">Lihat Detail Tabungan</a>
+    </div>
+@endsection

@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Services\NotificationService;
 use App\Services\SavingsService;
+use App\Notifications\SavingApprovedNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 use App\Notifications\SavingApproved;
+use App\Notifications\SavingConfirmed;
 
 class Saving extends Model
 {
@@ -57,13 +59,22 @@ class Saving extends Model
                 $saving->sequence_number = $lastSaving ? $lastSaving->sequence_number + 1 : 1;
             }
         });
-    }
 
-    protected static function booted()
-    {
+        static::created(function ($saving) {
+            // Notify admins about new saving
+            User::whereIn('role', ['bendahara', 'panitia'])->get()
+                ->each(function ($admin) use ($saving) {
+                    $admin->notify(new \App\Notifications\SavingSubmitted($saving));
+                });
+        });
+
         static::updated(function ($saving) {
-            if ($saving->isDirty('status') && $saving->status === 'approved') {
-                $saving->user->notify(new SavingApproved($saving));
+            if ($saving->wasChanged('status') && $saving->status === 'approved') {
+                $saving->user->notify(new SavingApprovedNotification(
+                    $saving,
+                    $saving->user->total_savings,
+                    $saving->user->progress
+                ));
             }
         });
     }

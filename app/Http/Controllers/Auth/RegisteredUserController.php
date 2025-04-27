@@ -31,8 +31,17 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:' . User::class,
+                'regex:/^[0-9]{12}@mhs\.dinus\.ac\.id$/',
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'email.regex' => 'Email harus menggunakan format email mahasiswa UDINUS (contoh: 122202303001@mhs.dinus.ac.id).'
         ]);
 
         // Extract NIM from email (122202303001@mhs.dinus.ac.id -> A22.2023.03001)
@@ -58,6 +67,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Send verification email immediately
+        $user->sendEmailVerificationNotification();
+
+        return redirect(route('verification.notice'))->with('status', 'verification-link-sent');
     }
 }
