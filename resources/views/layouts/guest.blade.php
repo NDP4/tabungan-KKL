@@ -18,16 +18,26 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased text-gray-900">
-        <div class="flex flex-col items-center min-h-screen pt-6 bg-gray-100 sm:justify-center sm:pt-0 dark:bg-gray-900">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 text-gray-500 fill-current" />
-                </a>
-            </div>
+    <body class="font-sans antialiased">
+        <div class="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-50">
+            <div class="container mx-auto min-h-screen flex flex-col items-center pt-8 sm:pt-12">
+                @if(settings('site_logo'))
+                    <div class="mb-4">
+                        <a href="/">
+                            <img src="{{ Storage::url(settings('site_logo')) }}" alt="{{ settings('site_name', 'Your Company') }}" class="w-16 h-16 object-contain">
+                        </a>
+                    </div>
+                @else
+                    <div class="mb-4">
+                        <a href="/">
+                            <x-application-logo class="w-16 h-16 text-indigo-600 fill-current" />
+                        </a>
+                    </div>
+                @endif
 
-            <div class="w-full px-0 py-0 mt-0 overflow-hidden bg-white shadow-md sm:max-w-md dark:bg-gray-800 sm:rounded-lg">
-                {{ $slot }}
+                <div class="w-full max-w-[480px] px-4">
+                    {{ $slot }}
+                </div>
             </div>
         </div>
     </body>

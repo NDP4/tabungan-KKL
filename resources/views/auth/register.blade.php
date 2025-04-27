@@ -1,82 +1,76 @@
 <x-guest-layout>
-    <div class="flex items-center justify-center min-h-screen px-4 py-12 bg-gray-100 sm:px-6 lg:px-8">
-        <div class="w-full max-w-lg p-8 bg-white shadow-lg rounded-xl">
-            <div class="text-center">
-                <h2 class="text-3xl font-bold text-gray-800">Buat Akun Baru</h2>
-                <p class="mt-2 text-sm text-gray-600">Daftar untuk mulai menabung</p>
+    <div class="w-full bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+        <div class="text-center mb-6 sm:mb-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Buat Akun Baru</h2>
+            <p class="text-sm sm:text-base text-gray-600">Daftar untuk mulai menabung</p>
+        </div>
+
+        <form method="POST" action="{{ route('register') }}" class="space-y-5">
+            @csrf
+
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                <div class="relative">
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
+                        class="w-full px-4 h-12 border border-gray-300 rounded-xl text-gray-900 text-sm sm:text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="Masukkan nama lengkap" />
+                </div>
+                <x-input-error :messages="$errors->get('name')" class="mt-1" />
             </div>
 
-            <form method="POST" action="{{ route('register') }}" class="mt-8 space-y-6">
-                @csrf
-
-                <!-- Name -->
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                    <div class="mt-1">
-                        <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
-                            class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-                    </div>
-                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Mahasiswa</label>
+                <div class="relative">
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                        class="w-full px-4 h-12 border border-gray-300 rounded-xl text-gray-900 text-sm sm:text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="122202300001@mhs.dinus.ac.id" />
                 </div>
+                <x-input-error :messages="$errors->get('email')" class="mt-1" />
+            </div>
 
-                <!-- Email Address -->
-                <div class="mt-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email Mahasiswa (@mhs.dinus.ac.id)</label>
-                    <div class="mt-1">
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email"
-                            placeholder="122202300001@mhs.dinus.ac.id"
-                            class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-                    </div>
-                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <div>
+                <label for="nim" class="block text-sm font-medium text-gray-700 mb-1">NIM</label>
+                <div class="relative">
+                    <input id="nim" type="text" name="nim" value="{{ old('nim') }}" required
+                        class="w-full px-4 h-12 border border-gray-300 rounded-xl text-gray-900 text-sm sm:text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="A22.2023.00001" />
                 </div>
+                <x-input-error :messages="$errors->get('nim')" class="mt-1" />
+            </div>
 
-                <!-- NIM -->
-                <div class="mt-4">
-                    <label for="nim" class="block text-sm font-medium text-gray-700">NIM</label>
-                    <div class="mt-1">
-                        <input id="nim" type="text" name="nim" value="{{ old('nim') }}" required autocomplete="nim"
-                            placeholder="A22.2023.00001"
-                            class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-                    </div>
-                    <x-input-error :messages="$errors->get('nim')" class="mt-2" />
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <div class="relative">
+                    <input id="password" type="password" name="password" required
+                        class="w-full px-4 h-12 border border-gray-300 rounded-xl text-gray-900 text-sm sm:text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="Minimal 8 karakter" />
                 </div>
+                <x-input-error :messages="$errors->get('password')" class="mt-1" />
+            </div>
 
-                <!-- Password -->
-                <div class="mt-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <div class="mt-1">
-                        <input id="password" type="password" name="password" required autocomplete="new-password"
-                            class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-                    </div>
-                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <div>
+                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
+                <div class="relative">
+                    <input id="password_confirmation" type="password" name="password_confirmation" required
+                        class="w-full px-4 h-12 border border-gray-300 rounded-xl text-gray-900 text-sm sm:text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="Masukkan ulang password" />
                 </div>
+                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
+            </div>
 
-                <!-- Confirm Password -->
-                <div class="mt-4">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
-                    <div class="mt-1">
-                        <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
-                            class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
-                    </div>
-                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-                </div>
+            <button type="submit"
+                class="w-full h-12 flex items-center justify-center border border-transparent rounded-xl text-sm sm:text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 mt-6">
+                Daftar Sekarang
+            </button>
 
-                <div class="mt-6">
-                    <button type="submit"
-                        class="flex justify-center w-full px-4 py-3 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Daftar
-                    </button>
-                </div>
-
-                <div class="mt-6 text-center">
-                    <p class="text-sm text-gray-600">
-                        Sudah punya akun?
-                        <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:text-blue-500">
-                            Masuk sekarang
-                        </a>
-                    </p>
-                </div>
-            </form>
-        </div>
+            <div class="text-center mt-6">
+                <p class="text-sm text-gray-600">
+                    Sudah punya akun?
+                    <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                        Masuk sekarang
+                    </a>
+                </p>
+            </div>
+        </form>
     </div>
 </x-guest-layout>
