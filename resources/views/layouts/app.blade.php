@@ -19,9 +19,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
     @livewireStyles
+    {{-- @livewire('notification-component') --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Alpine.js -->
+    <script src="//unpkg.com/alpinejs" defer></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="h-full font-sans antialiased" x-data="{ mobileMenuOpen: false }">
@@ -181,38 +183,30 @@
             "hideMethod": "fadeOut"
         };
 
-        // Handle notification updates
-        window.addEventListener('notificationMarkedAsRead', event => {
-            toastr.success('Notification marked as read');
-            Livewire.emit('refreshNotifications');
-        });
+        // Handle Livewire events
+        document.addEventListener('livewire:init', () => {
+            // Listen for generic alert events
+            Livewire.on('alert', (data) => {
+                const type = data[0].type;
+                const message = data[0].message;
 
-        window.addEventListener('allNotificationsMarkedAsRead', event => {
-            toastr.success('All notifications marked as read');
-            Livewire.emit('refreshNotifications');
-        });
-
-        // Replace default alerts with Toastr
-        window.addEventListener('alert', event => {
-            const type = event.detail.type;
-            const message = event.detail.message;
-
-            switch(type) {
-                case 'success':
-                    toastr.success(message);
-                    break;
-                case 'error':
-                    toastr.error(message);
-                    break;
-                case 'warning':
-                    toastr.warning(message);
-                    break;
-                case 'info':
-                    toastr.info(message);
-                    break;
-                default:
-                    toastr.info(message);
-            }
+                switch(type) {
+                    case 'success':
+                        toastr.success(message);
+                        break;
+                    case 'error':
+                        toastr.error(message);
+                        break;
+                    case 'warning':
+                        toastr.warning(message);
+                        break;
+                    case 'info':
+                        toastr.info(message);
+                        break;
+                    default:
+                        toastr.info(message);
+                }
+            });
         });
 
         // Handle session flash messages

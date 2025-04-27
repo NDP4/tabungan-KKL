@@ -35,3 +35,10 @@ function showNotification(type, message) {
             toastr.info(message);
     }
 }
+
+// Fungsi untuk menampilkan notifikasi
+document.addEventListener("livewire:init", () => {
+    Livewire.on("alert", (data) => {
+        showNotification(data[0].type, data[0].message);
+    });
+});
