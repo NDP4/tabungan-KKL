@@ -86,9 +86,9 @@ class Reports extends Page
                         )->deleteFileAfterSend();
                     }),
             ])->label('Export Data')
-              ->icon('heroicon-m-document-chart-bar')
-              ->color('primary')
-              ->button(),
+                ->icon('heroicon-m-document-chart-bar')
+                ->color('primary')
+                ->button(),
         ];
     }
 
