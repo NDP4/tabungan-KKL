@@ -6,7 +6,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
         </svg>
         @if($unreadCount > 0)
-            <span class="absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full">
+            <span class="absolute inline-flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">
                 {{ $unreadCount }}
             </span>
         @endif
@@ -17,7 +17,7 @@
          x-cloak
          class="absolute right-0 z-50 mt-2 origin-top-right bg-white rounded-lg shadow-lg w-80 ring-1 ring-black ring-opacity-5">
         <div class="p-4">
-            <div class="flex items-center justify-between mb-4">
+            {{-- <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-medium">Notifikasi ({{ $unreadCount }})</h3>
                 @if($unreadCount > 0)
                     <button wire:click="markAllAsRead" type="button"
@@ -25,7 +25,7 @@
                         Tandai semua dibaca
                     </button>
                 @endif
-            </div>
+            </div> --}}
 
             <div class="space-y-4">
                 @forelse($notifications as $notification)
@@ -39,7 +39,7 @@
                                     {{ $notification->created_at->diffForHumans() }}
                                 </p>
                             </div>
-                            <div class="flex items-center space-x-2">
+                            {{-- <div class="flex items-center space-x-2">
                                 @if(is_null($notification->read_at))
                                     <button wire:click="markAsRead('{{ $notification->id }}')" type="button"
                                             class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none">
@@ -50,7 +50,7 @@
                                         class="text-sm text-red-600 hover:text-red-800 focus:outline-none">
                                     Hapus
                                 </button>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 @empty

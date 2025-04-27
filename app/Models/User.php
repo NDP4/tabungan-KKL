@@ -33,6 +33,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'last_login' => 'datetime',
     ];
 
     public function canAccessPanel(Panel $panel): bool
